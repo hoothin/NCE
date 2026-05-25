@@ -133,6 +133,7 @@
     body.low-performance .book-card,
     body.low-performance .history-section,
     body.low-performance .history-card,
+    body.low-performance .housetime-promo,
     body.low-performance .settings-modal,
     body.low-performance .settings-modal__content,
     body.low-performance .index-header .settings-btn,
@@ -147,6 +148,10 @@
     /* 低性能模式下使用更深的背景色补偿 */
     body.low-performance .book-container,
     body.low-performance .history-section {
+        background-color: rgba(24, 24, 24, 0.92) !important;
+    }
+
+    body.low-performance .housetime-promo {
         background-color: rgba(24, 24, 24, 0.92) !important;
     }
 
@@ -572,6 +577,22 @@
         color: var(--text-color);
     }
 </style>
+<a class="housetime-promo housetime-promo--home" href="https://housetime.zgame.fun/?utm_source=nce&utm_medium=homepage_banner&utm_campaign=study_break" target="_blank" rel="noopener sponsored" aria-label="打开宅时光官网">
+    <img class="housetime-promo__image" src="static/housetime-promo.png" alt="" loading="lazy" decoding="async">
+    <span class="housetime-promo__shade" aria-hidden="true"></span>
+    <div class="housetime-promo__content">
+        <img class="housetime-promo__logo" src="static/housetime-logo.png" alt="宅时光" loading="lazy" decoding="async">
+        <span class="housetime-promo__eyebrow">学习间隙推荐</span>
+        <h2>背完一课，回到你的像素小家</h2>
+        <p>在宅时光布置房间、种田做菜、换装串门，把休息时间过得更可爱。</p>
+        <span class="housetime-promo__tags" aria-label="宅时光特色">
+            <span>像素生活</span>
+            <span>自由建造</span>
+            <span>温馨社区</span>
+        </span>
+        <span class="housetime-promo__cta">进入宅时光</span>
+    </div>
+</a>
 <div class="book-container">
     <div class="book-header">
         <h3>全四册课文导航</h3>

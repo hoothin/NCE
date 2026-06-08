@@ -307,6 +307,237 @@ hr {
     padding-bottom: 2px;
 }
 
+.alipay-red-packet-slot {
+    position: fixed;
+    top: 50%;
+    right: 22px;
+    z-index: 1250;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.alipay-red-packet-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    max-width: min(100%, 360px);
+    min-height: 38px;
+    min-width: 38px;
+    padding: 8px 10px;
+    overflow: visible;
+    isolation: isolate;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background: rgba(24, 24, 24, 0.72);
+    color: var(--text-color-dark);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+    pointer-events: auto;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: center;
+    transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, padding 0.22s ease, gap 0.22s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.alipay-red-packet-btn::before,
+.alipay-red-packet-btn::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    z-index: 0;
+    border: 1px solid rgba(29, 185, 84, 0.52);
+    border-radius: inherit;
+    background: radial-gradient(circle, rgba(29, 185, 84, 0.36) 0%, rgba(29, 185, 84, 0.2) 38%, transparent 72%);
+    filter: blur(8px);
+    box-shadow: 0 0 18px rgba(29, 185, 84, 0.36), inset 0 0 12px rgba(29, 185, 84, 0.16);
+    opacity: 0;
+    pointer-events: none;
+    animation: red-packet-glow 2.4s ease-out infinite;
+}
+
+.alipay-red-packet-btn::after {
+    inset: -20px;
+    border-color: rgba(29, 185, 84, 0.34);
+    background: radial-gradient(circle, rgba(29, 185, 84, 0.24) 0%, rgba(29, 185, 84, 0.14) 42%, transparent 74%);
+    filter: blur(14px);
+    box-shadow: 0 0 28px rgba(29, 185, 84, 0.28), inset 0 0 18px rgba(29, 185, 84, 0.12);
+    animation-delay: 0.8s;
+}
+
+.alipay-red-packet-btn.is-claimed-today::before,
+.alipay-red-packet-btn.is-claimed-today::after {
+    display: none;
+}
+
+.alipay-red-packet-btn__icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='5' y='3' width='14' height='18' rx='2.6' fill='%23d9483b'/%3E%3Cpath d='M7 8.2h10M8.2 3.8l3.8 4 3.8-4M12 8v12' fill='none' stroke='%23ffd36b' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='13.1' r='2.2' fill='%23ffd36b'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    position: relative;
+    z-index: 1;
+}
+
+.alipay-red-packet-btn__label {
+    position: relative;
+    z-index: 1;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    white-space: nowrap;
+    transition: max-width 0.22s ease, opacity 0.16s ease;
+}
+
+.alipay-red-packet-btn:hover,
+.alipay-red-packet-btn:focus-visible {
+    transform: translateY(-1px);
+    border-color: rgba(29, 185, 84, 0.48);
+    background-color: rgba(32, 32, 32, 0.82);
+    color: var(--text-color);
+}
+
+.alipay-red-packet-btn:focus-visible {
+    outline: 2px solid rgba(29, 185, 84, 0.68);
+    outline-offset: 3px;
+}
+
+.alipay-red-packet-btn:hover,
+.alipay-red-packet-btn:focus-visible {
+    gap: 8px;
+    padding: 8px 15px;
+}
+
+.alipay-red-packet-btn:hover .alipay-red-packet-btn__label,
+.alipay-red-packet-btn:focus-visible .alipay-red-packet-btn__label {
+    max-width: 300px;
+    opacity: 1;
+}
+
+.alipay-red-packet-btn:active {
+    transform: translateY(0);
+}
+
+.red-packet-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(18px, 4vw, 48px);
+    background: rgba(0, 0, 0, 0.82);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+
+.red-packet-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.red-packet-modal__panel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    max-width: calc(100vw - clamp(36px, 8vw, 96px));
+    max-height: calc(100dvh - clamp(36px, 8vw, 96px));
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    background: rgba(24, 24, 24, 0.74);
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.58);
+    transform: scale(0.98);
+    transition: transform 0.22s ease;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.red-packet-modal.open .red-packet-modal__panel {
+    transform: scale(1);
+}
+
+.red-packet-modal__image {
+    display: block;
+    width: auto;
+    max-width: calc(100vw - clamp(62px, 8vw, 122px));
+    max-height: calc(100dvh - clamp(62px, 8vw, 122px));
+    border-radius: 12px;
+    background: var(--container-highlight);
+    object-fit: contain;
+}
+
+.red-packet-modal__close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+    background: rgba(24, 24, 24, 0.96);
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.red-packet-modal__close:hover,
+.red-packet-modal__close:focus-visible {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.red-packet-modal__status {
+    position: absolute;
+    left: 50%;
+    bottom: -42px;
+    width: min(100%, 360px);
+    transform: translateX(-50%);
+    color: var(--text-color-dark);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+body.red-packet-modal-open {
+    overflow: hidden;
+}
+
+body.low-performance .alipay-red-packet-btn,
+body.low-performance .red-packet-modal__panel {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body.low-performance .alipay-red-packet-btn {
+    background: rgba(24, 24, 24, 0.92);
+}
+
+body.low-performance .red-packet-modal__panel {
+    background: rgba(24, 24, 24, 0.96);
+}
+
 footer {
     padding: 20px;
     text-align: center;
@@ -357,6 +588,43 @@ footer a:hover::after {
         margin: 0 10px 16px;
         padding: 20px;
     }
+    .alipay-red-packet-slot {
+        position: static;
+        justify-content: center;
+        margin: 0 10px 14px;
+        transform: none;
+        pointer-events: auto;
+    }
+    .alipay-red-packet-btn {
+        width: auto;
+        max-width: 100%;
+        padding: 8px 14px;
+        font-size: 0.86rem;
+        gap: 8px;
+    }
+    .alipay-red-packet-btn__label {
+        max-width: 300px;
+        opacity: 1;
+    }
+    .red-packet-modal {
+        padding: 16px;
+    }
+    .red-packet-modal__panel {
+        max-width: calc(100vw - 32px);
+        max-height: calc(100dvh - 32px);
+        padding: 8px;
+        border-radius: 14px;
+    }
+    .red-packet-modal__image {
+        max-width: calc(100vw - 48px);
+        max-height: calc(100dvh - 72px);
+        border-radius: 10px;
+    }
+    .red-packet-modal__close {
+        top: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.72);
+    }
     .housetime-promo__image {
         object-position: center bottom;
     }
@@ -389,5 +657,32 @@ footer a:hover::after {
     }
     .housetime-promo--compact h2 {
         font-size: 1.22rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .alipay-red-packet-btn,
+    .red-packet-modal,
+    .red-packet-modal__panel,
+    .red-packet-modal__close {
+        transition: none;
+    }
+    .alipay-red-packet-btn::before,
+    .alipay-red-packet-btn::after {
+        animation: none;
+    }
+}
+
+@keyframes red-packet-glow {
+    0% {
+        opacity: 0;
+        transform: scale(0.72);
+    }
+    18% {
+        opacity: 0.78;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.62);
     }
 }

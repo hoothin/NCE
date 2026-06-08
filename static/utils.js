@@ -1,4 +1,7 @@
 (() => {
+    const RED_PACKET_IMAGE_URL = 'https://s2.loli.net/2024/07/04/1CIsVfT9rxjKwRU.jpg';
+    const RED_PACKET_CLAIM_DATE_KEY = 'nceRedPacketClaimDate';
+
     function hashString(input) {
         let hash = 0;
         const str = String(input || '');
@@ -344,6 +347,171 @@
         return payload;
     }
 
+    /**
+     * 获取本地日期键，用于按自然日控制红包动效。
+     * @returns {string} YYYY-MM-DD 格式的本地日期。
+     */
+    function getLocalDateKey() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    /**
+     * 判断用户当天是否已经点过红包入口。
+     * @returns {boolean} 当天已点击返回 true。
+     */
+    function hasClaimedRedPacketToday() {
+        try {
+            return localStorage.getItem(RED_PACKET_CLAIM_DATE_KEY) === getLocalDateKey();
+        } catch (error) {
+            console.warn('Unable to read red packet claim date.', error);
+            return false;
+        }
+    }
+
+    /**
+     * 记录用户当天已点击红包入口。
+     * @returns {void}
+     */
+    function markRedPacketClaimedToday() {
+        try {
+            localStorage.setItem(RED_PACKET_CLAIM_DATE_KEY, getLocalDateKey());
+        } catch (error) {
+            console.warn('Unable to save red packet claim date.', error);
+        }
+    }
+
+    /**
+     * 创建支付宝红包全屏浮层，并绑定关闭按钮与图片状态提示。
+     * @returns {HTMLElement} 全屏浮层根节点。
+     */
+    function createRedPacketModal() {
+        const modal = document.createElement('div');
+        modal.id = 'red-packet-modal';
+        modal.className = 'red-packet-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-hidden', 'true');
+        modal.setAttribute('aria-label', '支付宝红包浮图');
+        modal.innerHTML = `
+            <div class="red-packet-modal__panel" role="document">
+                <button type="button" class="red-packet-modal__close" data-red-packet-close aria-label="关闭支付宝红包浮图">×</button>
+                <img class="red-packet-modal__image" src="${RED_PACKET_IMAGE_URL}" alt="支付宝红包领取二维码" loading="lazy" decoding="async">
+                <p class="red-packet-modal__status" aria-live="polite"></p>
+            </div>
+        `;
+
+        const image = modal.querySelector('.red-packet-modal__image');
+        const status = modal.querySelector('.red-packet-modal__status');
+        if (image && status) {
+            image.addEventListener('load', () => {
+                status.textContent = '';
+            });
+            image.addEventListener('error', () => {
+                status.textContent = '图片加载失败，请稍后再试。';
+            });
+        }
+
+        document.body.appendChild(modal);
+        return modal;
+    }
+
+    /**
+     * 初始化所有支付宝红包入口，点击后打开全屏浮图。
+     * @returns {void}
+     */
+    function initRedPacketPromo() {
+        const triggers = document.querySelectorAll('[data-red-packet-trigger]');
+        if (!triggers.length) {
+            return;
+        }
+
+        const modal = document.querySelector('.red-packet-modal') || createRedPacketModal();
+        const closeButton = modal.querySelector('[data-red-packet-close]');
+        let activeTrigger = null;
+
+        /**
+         * 根据当天点击状态同步红包按钮动效显示。
+         * @returns {void}
+         */
+        function syncClaimState() {
+            const claimedToday = hasClaimedRedPacketToday();
+            triggers.forEach((trigger) => {
+                trigger.classList.toggle('is-claimed-today', claimedToday);
+            });
+        }
+
+        /**
+         * 同步所有红包入口的展开状态。
+         * @param {boolean} isOpen 弹层是否处于打开状态。
+         * @returns {void}
+         */
+        function updateTriggerState(isOpen) {
+            triggers.forEach((trigger) => {
+                trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            });
+        }
+
+        /**
+         * 关闭红包浮层并恢复触发按钮焦点。
+         * @returns {void}
+         */
+        function closeModal() {
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('red-packet-modal-open');
+            updateTriggerState(false);
+            if (activeTrigger && typeof activeTrigger.focus === 'function') {
+                activeTrigger.focus();
+            }
+            activeTrigger = null;
+        }
+
+        /**
+         * 打开红包浮层并记录当前触发按钮。
+         * @param {Element} trigger 触发打开动作的按钮元素。
+         * @returns {void}
+         */
+        function openModal(trigger) {
+            activeTrigger = trigger;
+            markRedPacketClaimedToday();
+            syncClaimState();
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('red-packet-modal-open');
+            updateTriggerState(true);
+            if (closeButton) {
+                closeButton.focus();
+            }
+        }
+
+        triggers.forEach((trigger) => {
+            trigger.addEventListener('click', () => {
+                openModal(trigger);
+            });
+        });
+        syncClaimState();
+
+        if (closeButton) {
+            closeButton.addEventListener('click', closeModal);
+        }
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && modal.classList.contains('open')) {
+                closeModal();
+            }
+        });
+    }
+
     const utils = {
         hashString,
         escapeForSvg,
@@ -362,5 +530,9 @@
 
     if (typeof window !== 'undefined') {
         window.NCEUtils = Object.freeze(utils);
+    }
+
+    if (typeof document !== 'undefined') {
+        document.addEventListener('DOMContentLoaded', initRedPacketPromo);
     }
 })();

@@ -66,21 +66,89 @@
 }
 
 @media (max-width: 768px) {
+    .index-header {
+        padding: 28px 14px 18px;
+    }
+    .book-container {
+        padding: 12px;
+    }
+    .book-header {
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+    .book-header h3 {
+        font-size: 1.05rem;
+    }
+    .book-container hr {
+        margin: 10px 0;
+    }
     .books-nav {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 12px;
+        padding: 8px 0 4px;
     }
     .book-card {
         text-align: center;
+        min-height: 122px;
     }
     .book-card img {
-        margin: 15px;
-        max-height: 35vw;
+        margin: 10px;
+        max-height: 28vw;
     }
     .books-nav>a {
-        max-width: calc(100vw - 50px);
+        max-width: calc(100vw - 44px);
     }
     .book-card .book-info {
         text-align: center;
+    }
+    .book-number {
+        margin-bottom: 3px;
+        font-size: 16px;
+    }
+    .book-title {
+        margin-bottom: 3px;
+        font-size: 14px;
+    }
+    .book-subtitle {
+        margin-bottom: 8px;
+        font-size: 12px;
+    }
+    .lesson-count {
+        padding: 4px 10px;
+        font-size: 11px;
+    }
+    .housetime-promo--home {
+        min-height: 272px;
+        margin: 0 10px 10px;
+        padding: 16px;
+    }
+    .housetime-promo--home .housetime-promo__content {
+        gap: 7px;
+    }
+    .housetime-promo--home .housetime-promo__logo {
+        width: 116px;
+        max-height: 44px;
+    }
+    .housetime-promo--home h2 {
+        font-size: 1.18rem;
+        line-height: 1.22;
+    }
+    .housetime-promo--home p {
+        font-size: 0.84rem;
+        line-height: 1.45;
+    }
+    .housetime-promo--home .housetime-promo__tags {
+        gap: 6px;
+    }
+    .housetime-promo--home .housetime-promo__tags span {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+    .housetime-promo--home .housetime-promo__cta {
+        margin-top: 2px;
+        font-size: 0.8rem;
+    }
+    footer {
+        padding: 12px 20px 14px;
     }
 }
